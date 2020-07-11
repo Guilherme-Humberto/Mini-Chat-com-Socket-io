@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciando com Socket_io</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="./styles.css"/>
+</head>
+
+<body>
+
+    <div id="container">
+        <h1 id="title">Socket io</h1>
+        <form id="formulario">
+            <input type="text" id="name" name="userName" autocomplete="off" placeholder="Insira seu nome" /><br>
+            <input type="text" id="message" autocomplete="off" name="userMessage"/><br>
+            <button type="submit" id="btnEvent">Enviar</button>
+        </form>
+        <div class="allMessages"></div>
+    </div>
+
+    <script type="text/javascript">
+        var socket = io('http://localhost:3001');
+
+        function renderMessages(message) {
+            $('.allMessages').append('<div class="messages"><strong>'
+            + message.name + ': </strong>' + message.message + '</div>')
+        }
+        socket.on('previousMessages', function(messages) {
+            for(message of messages) {
+                renderMessages(message)
+            }
+        })
+        socket.on('receivedMessage', (message) => {
+            renderMessages(message)
+        })
+        $('#formulario').submit(function(event) {
+            event.preventDefault()
+            var author = $('input[name=userName]').val();
+            var message = $('input[name=userMessage]').val();
+
+            if(author.length && message.length) {
+                var messageObj = {
+                    name: author,
+                    message: message
+                }
+                renderMessages(messageObj)
+                socket.emit('sendMessages', messageObj)
+            }
+        })
+    </script>
+</body>
+
+</html>
