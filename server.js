@@ -1,6 +1,5 @@
 const express = require('express')
 const path = require('path')
-const e = require('express')
 
 // Configurando o servidor
 const app = express();
